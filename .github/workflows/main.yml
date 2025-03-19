@@ -20,8 +20,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip3 install -r rc_pai_testing/requirements.txt
 
     - name: Authenticate to Google Cloud
       env:
