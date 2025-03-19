@@ -33,8 +33,7 @@ jobs:
         GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
         GCS_SERVICE_ACCOUNT_KEY: ${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}
       run: |
-        echo ${{ secrets.GCP_PROJECT }}
-        echo "${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}" | base64 --decode > gcloud-service-key.json
+        echo "${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}" > gcloud-service-key.json
         gcloud auth activate-service-account --key-file=gcloud-service-key.json
         gcloud config set project $GCP_PROJECT
 
