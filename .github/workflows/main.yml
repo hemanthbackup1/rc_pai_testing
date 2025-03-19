@@ -20,7 +20,13 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip3 install -r rc_pai_testing/requirements.txt
+        python3 -m pip install --upgrade pip
+        pip3 install -r .github/workflows/requirements.txt
+
+    - name: Install additional dependencies
+      run: |
+        pip3 install google-cloud-storage
+        pip3 install google-cloud-dataproc
 
     - name: Authenticate to Google Cloud
       env:
