@@ -28,7 +28,7 @@ jobs:
         pip3 install google-cloud-storage
         pip3 install google-cloud-dataproc
 
-    - name: Authenticate to Google Cloud
+    - name: Authenticate to Google Cloud 
       env:
         GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
       run: |
