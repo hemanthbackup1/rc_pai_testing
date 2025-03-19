@@ -31,10 +31,8 @@ jobs:
     - name: Authenticate to Google Cloud
       env:
         GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
-        GCS_SERVICE_ACCOUNT_KEY: ${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}
       run: |
-        echo "${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}" | sed 's/\\n/\n/g' > ${HOME}/gcloud-service-key.json
-        gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+        gcloud auth activate-service-account --key-file=.github/workflows/gcloud-service-key.json
         gcloud config set project $GCP_PROJECT
 
     - name: Upload scripts to GCS
