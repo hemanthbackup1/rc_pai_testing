@@ -44,7 +44,7 @@ jobs:
         GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
       run: |
         gsutil cp dataproc-astra-job/src/dataproc_astra_job.py gs://$GCS_BUCKET/
-        gsutil cp install_dependencies.sh gs://$GCS_BUCKET/
+        gsutil cp dataproc-astra-job/install_dependencies.sh gs://$GCS_BUCKET/
 
     - name: Submit Dataproc job 
       env:
