@@ -28,10 +28,10 @@ jobs:
         GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
         GCS_SERVICE_ACCOUNT_KEY: ${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}
       run: |
-        echo "${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}" > gcloud-service-key.json
+        printf "%s" "${GCS_SERVICE_ACCOUNT_KEY}" > gcloud-service-key.json
         gcloud auth activate-service-account --key-file=gcloud-service-key.json
         gcloud config set project "$GCP_PROJECT"
-        rm -f gcloud-service-key.json  # Securely remove credentials
+        rm -f gcloud-service-key.json  # Clean up the key file
 
     - name: Upload Scripts to GCS (Auto-Sync)
       env:
