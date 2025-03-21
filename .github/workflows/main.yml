@@ -52,6 +52,6 @@ jobs:
         gcloud dataproc batches submit pyspark gs://$GCS_BUCKET/dataproc/jobs/dataproc_astra_job.py \
           --region us-central1 \
           --deps-bucket gs://$GCS_BUCKET \
-          --jars gs://$GCS_BUCKET/secure-connect-database_name.zip \
+          --jars gs://$GCS_BUCKET/secure-connect-rc-pai-test.zip \
           --properties spark.jars.packages=com.datastax.spark:spark-cassandra-connector_2.12:3.1.0 \
           --py-files gs://$GCS_BUCKET/dataproc/jobs/utils/utils.py,gs://$GCS_BUCKET/dataproc/scripts/install_dependencies.sh
