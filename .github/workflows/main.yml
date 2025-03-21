@@ -28,15 +28,16 @@ jobs:
         pip3 install google-cloud-storage
         pip3 install google-cloud-dataproc
 
+
     - name: Authenticate to Google Cloud
       env:
         GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
         GCS_SERVICE_ACCOUNT_KEY: ${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}
       run: |
-        key=$(echo "${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}" | tr -d '\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-        echo "$key" > gcloud-service-key.json
+        printf "%s" "${GCS_SERVICE_ACCOUNT_KEY}" > gcloud-service-key.json
         gcloud auth activate-service-account --key-file=gcloud-service-key.json
-        gcloud config set project $GCP_PROJECT
+        gcloud config set project "$GCP_PROJECT"
+        rm -f gcloud-service-key.json  # Clean up the key file
 
     - name: Upload scripts to GCS
       env:
