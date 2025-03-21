@@ -7,3 +7,4 @@ python-dotenv==0.19.0
 astrapy==0.1.0
 pyspark==3.1.2
 google-cloud-storage
+google-cloud-dataproc
