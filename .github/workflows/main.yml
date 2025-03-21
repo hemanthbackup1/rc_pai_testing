@@ -1,4 +1,4 @@
-name: Dataproc Astra DB Job
+name: Deploy Dataproc Astra DB Job
 
 on:
   push:
@@ -10,43 +10,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+    - name: Checkout Repository
+      uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
+    - name: Set Up Python
+      uses: actions/setup-python@v3
       with:
         python-version: '3.8'
 
-    - name: Install dependencies
+    - name: Install Dependencies
       run: |
         python3 -m pip install --upgrade pip
-        pip3 install -r .github/workflows/requirements.txt
-
-    - name: Install additional dependencies
-      run: |
-        pip3 install google-cloud-storage
-        pip3 install google-cloud-dataproc
-
+        pip3 install -r dataproc/requirements.txt
 
     - name: Authenticate to Google Cloud
       env:
         GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
         GCS_SERVICE_ACCOUNT_KEY: ${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}
       run: |
-        printf "%s" "${GCS_SERVICE_ACCOUNT_KEY}" > gcloud-service-key.json
+        echo "${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}" > gcloud-service-key.json
         gcloud auth activate-service-account --key-file=gcloud-service-key.json
         gcloud config set project "$GCP_PROJECT"
-        rm -f gcloud-service-key.json  # Clean up the key file
+        rm -f gcloud-service-key.json  # Securely remove credentials
 
-    - name: Upload scripts to GCS
+    - name: Upload Scripts to GCS (Auto-Sync)
       env:
         GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
       run: |
-        gsutil cp dataproc-astra-job/src/dataproc_astra_job.py gs://$GCS_BUCKET/
-        gsutil cp dataproc-astra-job/install_dependencies.sh gs://$GCS_BUCKET/
+        gsutil -m rsync -r dataproc/jobs gs://$GCS_BUCKET/dataproc/jobs
+        gsutil -m rsync -r dataproc/scripts gs://$GCS_BUCKET/dataproc/scripts
+        gsutil -m rsync -r -x ".*\.env$" dataproc/config gs://$GCS_BUCKET/dataproc/config
 
-    - name: Submit Dataproc job 
+    - name: Submit Dataproc Job
       env:
         GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
         GCS_OUTPUT_PATH: ${{ secrets.GCS_OUTPUT_PATH }}
@@ -55,9 +50,9 @@ jobs:
         ASTRA_DB_CLIENT_SECRET: ${{ secrets.ASTRA_DB_CLIENT_SECRET }}
         ASTRA_DB_SECURE_CONNECT_BUNDLE: ${{ secrets.ASTRA_DB_SECURE_CONNECT_BUNDLE }}
       run: |
-        gcloud dataproc batches submit pyspark gs://$GCS_BUCKET/dataproc_astra_job.py \
+        gcloud dataproc batches submit pyspark gs://$GCS_BUCKET/dataproc/dataproc_astra_job.py \
           --region us-central1 \
           --deps-bucket gs://$GCS_BUCKET \
-          --jars gs://$GCS_BUCKET/secure-connect-database_name.zip \
-          --properties spark.jars.packages=com.datastax.spark:spark-cassandra-connector_2.12:3.0.0 \
-          --py-files gs://$GCS_BUCKET/install_dependencies.sh
+          --jars gs://$GCS_BUCKET/dataproc/secure-connect-database_name.zip \
+          --properties spark.jars.packages=com.datastax.spark:spark-cassandra-connector_2.12:3.1.0 \
+          --py-files gs://$GCS_BUCKET/dataproc/utils.py,gs://$GCS_BUCKET/dataproc/install_dependencies.sh
