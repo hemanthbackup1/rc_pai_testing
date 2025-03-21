@@ -39,7 +39,7 @@ jobs:
       run: |
         gsutil -m rsync -r dataproc/jobs gs://$GCS_BUCKET/dataproc/jobs
         gsutil -m rsync -r dataproc/scripts gs://$GCS_BUCKET/dataproc/scripts
-        gsutil -m rsync -r -x ".*\.env$" dataproc/config gs://$GCS_BUCKET/dataproc/config
+        gsutil -m rsync -r -x ".*\.env$" dataproc/config gs://$GCS_BUCKET/dataproc/config/
 
     - name: Submit Dataproc Job
       env:
