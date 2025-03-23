@@ -39,6 +39,7 @@ jobs:
           echo "ERROR: Dockerfile not found!"
           exit 1
         fi
+      shell: /usr/bin/bash -e {0}
 
     - name: Build Docker Image
       run: |
