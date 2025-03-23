@@ -45,12 +45,6 @@ jobs:
       run: |
         gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT }}/dataproc-astra-job:latest dataproc_local
 
-
-    - name: Push Docker Image to Google Container Registry
-      run: |
-        gcloud auth configure-docker
-        docker push gcr.io/${{ secrets.GCP_PROJECT }}/dataproc-astra-job:latest
-
     - name: Submit Dataproc Job
       env:
         GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
