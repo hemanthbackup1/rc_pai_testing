@@ -48,7 +48,7 @@ jobs:
 
     - name: Build Docker Image
       run: |
-        docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/dataproc-astra-job:latest -f dataproc/Dockerfile .
+        docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/dataproc-astra-job:latest -f ./dataproc/Dockerfile .
       shell: /usr/bin/bash -e {0}
       env:
         pythonLocation: /opt/hostedtoolcache/Python/3.8.18/x64
