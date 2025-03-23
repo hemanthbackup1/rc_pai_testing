@@ -37,21 +37,17 @@ jobs:
       env:
         GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
       run: |
-        gsutil -m rsync -r dataproc/jobs gs://$GCS_BUCKET/dataproc/jobs
-        gsutil -m rsync -r dataproc/scripts gs://$GCS_BUCKET/dataproc/scripts
+        gsutil -m rsync -r dataproc gs://$GCS_BUCKET/dataproc
 
     - name: Submit Dataproc Job
       env:
         GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
         GCS_OUTPUT_PATH: ${{ secrets.GCS_OUTPUT_PATH }}
-        ASTRA_DB_KEYSPACE: ${{ secrets.ASTRA_DB_KEYSPACE }}
-        ASTRA_DB_CLIENT_ID: ${{ secrets.ASTRA_DB_CLIENT_ID }}
-        ASTRA_DB_CLIENT_SECRET: ${{ secrets.ASTRA_DB_CLIENT_SECRET }}
-        ASTRA_DB_SECURE_CONNECT_BUNDLE: ${{ secrets.ASTRA_DB_SECURE_CONNECT_BUNDLE }}
       run: |
         gcloud dataproc batches submit pyspark gs://$GCS_BUCKET/dataproc/jobs/dataproc_astra_job.py \
           --region us-central1 \
           --deps-bucket gs://$GCS_BUCKET \
           --jars gs://$GCS_BUCKET/secure-connect-rc-pai-test.zip \
           --properties spark.jars.packages=com.datastax.spark:spark-cassandra-connector_2.12:3.1.0 \
-          --py-files gs://$GCS_BUCKET/dataproc/jobs/utils/utils.py,gs://$GCS_BUCKET/dataproc/scripts/install_dependencies.sh
+          --py-files gs://$GCS_BUCKET/dataproc/jobs/utils/nv_db_connection.py,gs://$GCS_BUCKET/dataproc/config/config.py
+          
