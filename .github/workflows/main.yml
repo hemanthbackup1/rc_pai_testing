@@ -28,24 +28,24 @@ jobs:
         gcloud config set project "$GCP_PROJECT"
         rm -f gcloud-service-key.json  # Clean up the key file
 
-    # - name: Upload Files to GCS
-    #   env:
-    #     GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
-    #   run: |
-    #     gsutil -m rsync -r dataproc gs://$GCS_BUCKET/dataproc
+    - name: Upload Files to GCS
+      env:
+        GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
+      run: |
+        gsutil -m rsync -r dataproc gs://$GCS_BUCKET/dataproc
 
-    # - name: Download Dataproc Files from GCS
-    #   env:
-    #     GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
-    #   run: |
-    #     mkdir -p dataproc_local
-    #     gsutil -m rsync -r gs://$GCS_BUCKET/dataproc dataproc_local
+    - name: Download Dataproc Files from GCS
+      env:
+        GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
+      run: |
+        mkdir -p dataproc_local
+        gsutil -m rsync -r gs://$GCS_BUCKET/dataproc dataproc_local
         
-    # - name: Build Docker Image using Cloud Build
-    #   env:
-    #     GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
-    #   run: |
-    #     gcloud builds submit --tag us-central1-docker.pkg.dev/$GCP_PROJECT/dataproc-repo/dataproc-astra-job:latest dataproc_local
+    - name: Build Docker Image using Cloud Build
+      env:
+        GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+      run: |
+        gcloud builds submit --tag us-central1-docker.pkg.dev/$GCP_PROJECT/dataproc-repo/dataproc-astra-job:latest dataproc_local
 
     - name: Submit Dataproc Job
       env:
@@ -58,4 +58,4 @@ jobs:
           --deps-bucket gs://$GCS_BUCKET \
           --jars gs://$GCS_BUCKET/secure-connect-rc-pai-test.zip \
           --properties spark.jars.packages=com.datastax.spark:spark-cassandra-connector_2.12:3.1.0 \
-          --container-image=us-central1-docker.pkg.dev/$GCP_PROJECT/dataproc-astra-job:latest
+          --container-image=us-central1-docker.pkg.dev/$GCP_PROJECT/dataproc-repo/dataproc-astra-job:latest
