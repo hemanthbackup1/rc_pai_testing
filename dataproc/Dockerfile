@@ -1,20 +1,18 @@
-# Use the official Python image
-FROM python:3.8-slim
+# Use official Dataproc image as base
+FROM us-docker.pkg.dev/cloud-dataproc/container/spark-py:2.2
 
-# Set writable working directory
+# Set a writable directory as home
+ENV HOME=/tmp
 WORKDIR /tmp
 
-# Set the home directory to /tmp (avoids permission issues)
-ENV HOME=/tmp
-
-# Copy the requirements file
-COPY requirements.txt .
+# Copy the application code
+COPY . .
 
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code
-COPY . .
+# Set Spark user to root to avoid permission errors
+USER root
 
-# Run the PySpark job
+# Set the entrypoint
 CMD ["python", "jobs/dataproc_astra_job.py"]
