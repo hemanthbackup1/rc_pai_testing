@@ -40,10 +40,12 @@ jobs:
       run: |
         mkdir -p dataproc_local
         gsutil -m rsync -r gs://$GCS_BUCKET/dataproc dataproc_local
-
+        
     - name: Build Docker Image using Cloud Build
+      env:
+        GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
       run: |
-        gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT }}/dataproc-astra-job:latest dataproc_local
+        gcloud builds submit --tag us-central1-docker.pkg.dev/$GCP_PROJECT/dataproc-repo/dataproc-astra-job:latest dataproc_local
 
     - name: Submit Dataproc Job
       env:
