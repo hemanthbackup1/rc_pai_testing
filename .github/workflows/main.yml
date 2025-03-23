@@ -33,6 +33,15 @@ jobs:
         gcloud config set project "$GCP_PROJECT"
         rm -f gcloud-service-key.json  # Clean up the key file
 
+    - name: Build Docker Image
+      run: |
+        docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/dataproc-astra-job:latest -f dataproc/Dockerfile .
+
+    - name: Push Docker Image to Google Container Registry
+      run: |
+        gcloud auth configure-docker
+        docker push gcr.io/${{ secrets.GCP_PROJECT }}/dataproc-astra-job:latest
+
     - name: Upload Scripts to GCS (Auto-Sync)
       env:
         GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
@@ -49,5 +58,5 @@ jobs:
           --deps-bucket gs://$GCS_BUCKET \
           --jars gs://$GCS_BUCKET/secure-connect-rc-pai-test.zip \
           --properties spark.jars.packages=com.datastax.spark:spark-cassandra-connector_2.12:3.1.0 \
-          --py-files gs://$GCS_BUCKET/dataproc/jobs/utils/nv_db_connection.py,gs://$GCS_BUCKET/dataproc/config/config.py
-          
+          --py-files gs://$GCS_BUCKET/dataproc/jobs/utils/nv_db_connection.py,gs://$GCS_BUCKET/dataproc/config/config.py \
+          --container-image=gcr.io/${{ secrets.GCP_PROJECT }}/dataproc-astra-job:latest
