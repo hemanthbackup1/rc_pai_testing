@@ -33,6 +33,13 @@ jobs:
         gcloud config set project "$GCP_PROJECT"
         rm -f gcloud-service-key.json  # Clean up the key file
 
+    - name: Verify Dockerfile
+      run: |
+        if [ ! -f dataproc/Dockerfile ]; then
+          echo "ERROR: Dockerfile not found!"
+          exit 1
+        fi
+
     - name: Build Docker Image
       run: |
         docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/dataproc-astra-job:latest -f dataproc/Dockerfile .
