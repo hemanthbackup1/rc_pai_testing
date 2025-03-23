@@ -33,6 +33,11 @@ jobs:
         gcloud config set project "$GCP_PROJECT"
         rm -f gcloud-service-key.json  # Clean up the key file
 
+    - name: List Directories
+      run: |
+        echo "Listing directories after GCP authentication:"
+        ls -la
+
     - name: Verify Dockerfile
       run: |
         if [ ! -f dataproc/Dockerfile ]; then
