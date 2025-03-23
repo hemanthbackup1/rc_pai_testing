@@ -33,11 +33,6 @@ jobs:
         gcloud config set project "$GCP_PROJECT"
         rm -f gcloud-service-key.json  # Clean up the key file
 
-    - name: List Directories
-      run: |
-        echo "Listing all subfolders and files after GCP authentication:"
-        ls -R
-
     - name: Upload Files to GCS
       env:
         GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
@@ -46,7 +41,11 @@ jobs:
 
     - name: Build Docker Image from GCS
       run: |
-        gcloud builds submit gs://$GCS_BUCKET/dataproc --tag gcr.io/${{ secrets.GCP_PROJECT }}/dataproc-astra-job:latest
+        gcloud builds submit --source gs://$GCS_BUCKET/dataproc --tag gcr.io/${{ secrets.GCP_PROJECT }}/dataproc-astra-job:latest
+      shell: /usr/bin/bash -e {0}
+      env:
+        pythonLocation: /opt/hostedtoolcache/Python/3.8.18/x64
+        LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.8.18/x64/lib
 
     - name: Push Docker Image to Google Container Registry
       run: |
