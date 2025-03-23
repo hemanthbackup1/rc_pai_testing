@@ -48,11 +48,9 @@ jobs:
 
     - name: Build Docker Image
       run: |
-        docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/dataproc-astra-job:latest -f ./dataproc/Dockerfile .
-      shell: /usr/bin/bash -e {0}
-      env:
-        pythonLocation: /opt/hostedtoolcache/Python/3.8.18/x64
-        LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.8.18/x64/lib
+        set -x  # Enables debug mode to print all commands
+        docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/dataproc-astra-job:latest -f dataproc/Dockerfile .
+
 
     - name: Push Docker Image to Google Container Registry
       run: |
