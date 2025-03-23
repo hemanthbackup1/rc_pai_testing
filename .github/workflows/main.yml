@@ -35,8 +35,8 @@ jobs:
 
     - name: List Directories
       run: |
-        echo "Listing directories after GCP authentication:"
-        ls -la
+        echo "Listing all subfolders and files after GCP authentication:"
+        ls -R
 
     - name: Verify Dockerfile
       run: |
